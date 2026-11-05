@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use rand::{Rng, RngExt};
+use rand::{Rng, RngExt, rngs::StdRng};
 
 pub type NodePtr = Box<Node>;
 
@@ -27,7 +27,7 @@ impl Node {
     }
 
     pub fn generate_random_tree(
-        generator: &mut TreeGenerator<impl Rng>,
+        generator: &mut TreeGenerator,
         method: &TreeGenMethod,
         current_depth: usize,
     ) -> Node {
@@ -49,7 +49,7 @@ impl Node {
     }
 
     fn generate_operator(
-        generator: &mut TreeGenerator<impl Rng>,
+        generator: &mut TreeGenerator,
         method: &TreeGenMethod,
         current_depth: usize,
     ) -> Node {
@@ -71,7 +71,7 @@ impl Node {
             )
         }
     }
-    fn generate_terminal(generator: &mut TreeGenerator<impl Rng>) -> Node {
+    fn generate_terminal(generator: &mut TreeGenerator) -> Node {
         match generator.rng.random_bool(VAR_PROB) {
             true => Node::Var(generator.rng.random_range(0..generator.vars_len)),
             false => Node::Const(generator.rng.random_range(generator.const_range.clone())),
@@ -324,8 +324,8 @@ pub enum TreeGenMethod {
     Full,
 }
 
-pub struct TreeGenerator<'a, R: Rng> {
-    rng: &'a mut R,
+pub struct TreeGenerator<'a> {
+    rng: StdRng,
     ops: &'a OperatorSet,
     const_range: Range<f64>,
     max_depth: usize,
@@ -335,6 +335,7 @@ pub struct TreeGenerator<'a, R: Rng> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::SeedableRng;
     use crate::ast::Node::{Const, Var};
 
     #[test]
@@ -370,14 +371,14 @@ mod tests {
         assert_eq!(result, expected, "evaluation of 2^v0 + x failed for v0=3.0");
     }
 
-    fn with_generator(max_depth: usize, f: impl FnOnce(&mut TreeGenerator<rand::rngs::ThreadRng>)) {
-        let mut rng = rand::rng();
+    fn with_generator(max_depth: usize, f: impl FnOnce(&mut TreeGenerator)) {
+        let rng = StdRng::seed_from_u64(42);
         let ops = OperatorSet {
             unary: UnaryOp::ALL.to_vec(),
             binary: BinaryOp::ALL.to_vec(),
         };
         let mut generator = TreeGenerator {
-            rng: &mut rng,
+            rng,
             ops: &ops,
             const_range: -10.0..10.0,
             max_depth,
