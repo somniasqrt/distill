@@ -1,4 +1,4 @@
-use symreg::dataset::Dataset;
+use distill_core::dataset::Dataset;
 
 fn main() {
     let ds = Dataset::new(

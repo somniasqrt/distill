@@ -325,7 +325,7 @@ pub enum TreeGenMethod {
 }
 
 pub struct TreeGenerator<'a> {
-    rng: StdRng,
+    rng: &'a mut StdRng,
     ops: &'a OperatorSet,
     const_range: Range<f64>,
     max_depth: usize,
@@ -372,13 +372,13 @@ mod tests {
     }
 
     fn with_generator(max_depth: usize, f: impl FnOnce(&mut TreeGenerator)) {
-        let rng = StdRng::seed_from_u64(42);
+        let mut rng = StdRng::seed_from_u64(42);
         let ops = OperatorSet {
             unary: UnaryOp::ALL.to_vec(),
             binary: BinaryOp::ALL.to_vec(),
         };
         let mut generator = TreeGenerator {
-            rng,
+            rng: &mut rng,
             ops: &ops,
             const_range: -10.0..10.0,
             max_depth,

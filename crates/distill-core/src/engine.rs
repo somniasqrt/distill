@@ -1,4 +1,8 @@
+use rand::SeedableRng;
+use rand::rngs::StdRng;
+
 use crate::ast::*;
+use crate::config::{Config, ConfigError};
 use crate::dataset::Dataset;
 
 #[derive(Clone, Debug)]
@@ -31,6 +35,29 @@ impl Individual {
                 .sum::<f64>();
         self.fitness = if mse.is_finite() { mse } else { f64::INFINITY };
         self.complexity = self.node.count();
+    }
+}
+
+pub struct Engine {
+    config: Config,
+    dataset: Dataset,
+    rng: StdRng,
+    population: Vec<Individual>,
+    generation: usize,
+}
+
+impl Engine {
+    pub fn new(mut config: Config, dataset: Dataset) -> Result<Engine, ConfigError> {
+        config.validate()?;
+        let seed = config.seed.unwrap_or_else(rand::random);
+        config.seed = Some(seed);
+        Ok(Engine {
+            config,
+            dataset,
+            rng: StdRng::seed_from_u64(seed),
+            population: Vec::new(),
+            generation: 0,
+        })
     }
 }
 
