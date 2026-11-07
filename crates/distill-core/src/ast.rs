@@ -335,8 +335,8 @@ pub struct TreeGenerator<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand::SeedableRng;
     use crate::ast::Node::{Const, Var};
+    use rand::SeedableRng;
 
     #[test]
     fn test_node_display() {
