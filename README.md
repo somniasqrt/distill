@@ -49,7 +49,7 @@ Requires Rust 1.85+ (edition 2024).
 
 ```sh
 git clone https://github.com/somniasqrt/distill.git
-cd distill"
+cd distill
 cargo build
 cargo test
 cargo run -p distill-core --example demo
