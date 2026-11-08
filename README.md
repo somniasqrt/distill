@@ -48,8 +48,8 @@ web/                placeholder for a future web interface
 Requires Rust 1.85+ (edition 2024).
 
 ```sh
-git clone https://github.com/somniasqrt/symbolic-regression-evolution-engine.git
-cd symbolic-regression-evolution-engine
+git clone https://github.com/somniasqrt/distill.git
+cd distill"
 cargo build
 cargo test
 cargo run -p distill-core --example demo
@@ -59,7 +59,7 @@ The library is not published on crates.io. To use it from another project, add a
 
 ```toml
 [dependencies]
-distill-core = { git = "https://github.com/somniasqrt/symbolic-regression-evolution-engine" }
+distill-core = { git = "https://github.com/somniasqrt/distill" }
 ```
 
 Minimal example (current API):
